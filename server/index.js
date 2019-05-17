@@ -6,6 +6,10 @@ import { hostname as _hostname } from 'os';
 import createTemplate from './template';
 import seo from '../common/seo';
 import { DARK_MODE_COOKIE, DARK_MODE_CLASS_NAME } from '../common/constants';
+import { readFileSync } from 'jsonfile'
+
+const manifestPath = `${process.cwd()}/public/assets/js/build-manifest.json`;
+export const manifest = readFileSync(manifestPath);
 
 const hostname = _hostname().substr(0, 3);
 const port = process.env.NODE_ENV === 'development' ? '8081' : '8080';
@@ -52,6 +56,7 @@ app
       bodyClass,
       title,
       description,
+      manifest,
     });
 
     template(res, { debug: 'off', stringToBufferThreshold: 1000 });

@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -28,6 +29,9 @@ const plugins = PRODUCTION
         SYNC_API_URL: JSON.stringify(API_URLS.SYNC.PRODUCTION),
         BANIS_API_URL: JSON.stringify(API_URLS.BANIS),
       }),
+      new ManifestPlugin({
+         fileName: 'build-manifest.json'
+      }),
     ]
   : [
       new webpack.DefinePlugin({
@@ -38,6 +42,9 @@ const plugins = PRODUCTION
         API_URL: JSON.stringify(API_URLS.DEVELOPMENT),
         SYNC_API_URL: JSON.stringify(API_URLS.SYNC.LOCAL),
         BANIS_API_URL: JSON.stringify(API_URLS.BANIS),
+      }),
+      new ManifestPlugin({
+         fileName: 'build-manifest.json'
       }),
     ];
 
@@ -50,8 +57,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'public/assets', 'js'),
-    chunkFilename: 'chunks/[name].js',
-    filename: '[name].js',
+    chunkFilename: 'chunks/[name].[contenthash].js',
+    filename: '[name].[contenthash].js',
     publicPath: '/assets/js/',
   },
   devtool: PRODUCTION ? undefined : 'inline-source-map',
