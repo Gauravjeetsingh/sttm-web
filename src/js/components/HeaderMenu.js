@@ -25,6 +25,9 @@ export default class Menu extends React.PureComponent {
           <BarsIcon />
         </span>
         <ul className="menu header-menu">
+          <li className="close">
+            <span role="button" aria-label="Close menu" onClick={closeMenu} />
+          </li>
           <li>
             <Link to="/hukamnama" onClick={toggleMenu}>
               Hukamnama
@@ -52,11 +55,6 @@ export default class Menu extends React.PureComponent {
             </Link>
           </li>
           */}
-          <li className="close">
-            <span role="button" aria-label="Close menu" onClick={closeMenu}>
-              Close
-            </span>
-          </li>
         </ul>
       </div>
     );
