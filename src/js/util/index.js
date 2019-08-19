@@ -380,10 +380,17 @@ export const dateMath = {
   },
   isBefore: (date1, date2) => new Date(date1) < new Date(date2),
   isAfter: (date1, date2) => new Date(date1) > new Date(date2),
-  expand: date => {
+  expand: (date, year=true) => {
     const inDate = new Date(date);
-    var options = { year: 'numeric', month: 'short', day: 'numeric' };
+    let options;
+    year ?
+    options = { year: 'numeric', month: 'short', day: 'numeric' } :
+    options = {month: 'short', day: 'numeric' }
     return inDate.toLocaleDateString('en', options);
+  },
+  isFuture: (date) => {
+    const today = new Date();
+    return dateMath.isBefore(today, date);
   },
 };
 
@@ -406,10 +413,13 @@ export const getHukamnama = data => {
     prevDate = undefined;
   }
 
-  //TODO: After API is updated, check if it's latest hukamnama and
-  //      set nextDate to undefined
+  //TODO: After API is updated, check if it's latest hukamnama from API
 
-  const nextDate = dateMath.algebra(hukamnamaDate, '+', 1);
+  let nextDate = dateMath.algebra(hukamnamaDate, '+', 1);
+
+  if (dateMath.isFuture(nextDate)) {
+    nextDate = undefined;
+  }
 
   shabad.nav = {
     previous: prevDate,

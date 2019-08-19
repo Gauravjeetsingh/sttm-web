@@ -96,8 +96,15 @@
   }
 }
 
-.chevron {
+.chevron, .Hour24 {
   fill: $sttm-orange;
+}
+
+.hukamnama-nav-icon {
+  > span {
+    font-size: 0.35em;
+    display: block;
+  }
 }
 
 .share-buttons svg,
