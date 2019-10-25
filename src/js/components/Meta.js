@@ -52,7 +52,6 @@ class Meta extends React.PureComponent {
       transliterationLanguages,
     } = this.props;
 
-    const link = toNavURL(this.props);
     const Item = ({ children, last = false }) =>
       children ? (
         <React.Fragment>
@@ -69,7 +68,7 @@ class Meta extends React.PureComponent {
       <div id="metadata">
         {isFalsy(nav.previous) === false ? (
           <div className="shabad-nav left">
-            <Link to={link + nav.previous}>
+            <a role="button" aria-label="previous" onClick={this.handleSaveAng}>
               {type === 'hukamnama' ? (
                 <div className='hukamnama-nav-icon'>
                   <Hour24 direction='previous' />
@@ -78,7 +77,7 @@ class Meta extends React.PureComponent {
               ) : (
                   <Chevron direction={Chevron.DIRECTIONS.LEFT} />
                 )}
-            </Link>
+            </a>
           </div>
         ) : type !== 'sync' ? (
           <div className="shabad-nav left disabled-nav">
@@ -182,10 +181,16 @@ class Meta extends React.PureComponent {
    * Handle SaveAng
    * @memberof Meta
    */
-  handleSaveAng = () => {
+  handleSaveAng = (event) => {
+    const nextNav = event.currentTarget.getAttribute('aria-label');
     const link = toNavURL(this.props);
-    shouldSaveAng(this.props) && saveAng(this.props.nav.next);
-    this.props.history.push(link + this.props.nav.next);
+    if (nextNav === 'next') {
+      shouldSaveAng(this.props) && saveAng(this.props.nav.next);
+      this.props.history.push(link + this.props.nav.next);
+    } else if (nextNav === 'previous') {
+      shouldSaveAng(this.props) && saveAng(this.props.nav.previous);
+      this.props.history.push(link + this.props.nav.previous);
+    }
   };
 }
 
