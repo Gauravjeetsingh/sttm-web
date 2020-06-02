@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SOURCES, SEARCH_TYPES, TYPES, SOURCES_WITH_ANG, MAX_ANGS, DOODLE } from '../constants';
+import { SOURCES, SEARCH_TYPES, TYPES, SOURCES_WITH_ANG, MAX_ANGS } from '../constants';
 import { Link } from 'react-router-dom';
 import EnhancedGurmukhiKeyboard from './GurmukhiKeyboardv2';
 import SearchForm from './SearchForm';
@@ -24,20 +24,45 @@ export default class Header extends React.PureComponent {
     history: PropTypes.shape({ push: PropTypes.func }),
   };
 
+  state = {
+    showDoodle: false,
+    doodleData: null,
+  }
+
   onFormSubmit = ({ handleSubmit, ...data }) => e => {
     e.preventDefault();
     handleSubmit();
     this.handleFormSubmit(data);
   };
 
+  fetchDoodle = () => {
+    fetch(`${DOODLE_URL}`)
+      .then(r => r.json())
+      .then((data) => {
+        if (data) {
+          this.setState({ showDoodle: true, doodleData: data.rows[0] });
+        }
+      }, (error) => {
+        console.log(error);
+        this.setState({ showDoodle: false, doodleData: null });
+      }
+      );
+  }
+
+  componentDidMount() {
+    this.fetchDoodle();
+  }
+
   handleFormSubmit = data => this.props.history.push(toSearchURL(data));
 
   render() {
     const {
       props: { defaultQuery, isHome, isAng, isController },
+      state: { showDoodle, doodleData },
       onFormSubmit,
       handleFormSubmit,
     } = this;
+
     const {
       source: defaultSource = null,
       type: defaultType = isAng ? SEARCH_TYPES.ANG.toString() : null,
@@ -69,9 +94,9 @@ export default class Header extends React.PureComponent {
         <div className="top-bar-wrapper row">
           {!isHome && (
             <div className="top-bar-title">
-              {dateMath.isFuture(DOODLE['date']) ?
-                (<Link to="/" title={DOODLE['title']} className="doodle-link"
-                  style={{ backgroundImage: `url(${DOODLE['smallImage']}) ` }} />) :
+              {showDoodle && 'smallImage' in doodleData ?
+                (<Link to="/" title={doodleData['Description']} className="doodle-link"
+                  style={{ backgroundImage: `url(${doodleData['smallImage']}) ` }} />) :
                 (<Link to="/" />)
               }
             </div>

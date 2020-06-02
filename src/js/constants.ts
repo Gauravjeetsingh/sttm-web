@@ -214,11 +214,3 @@ export const MAX_ANGS = {
   B: 40,
   S: 28
 }
-
-export const DOODLE = {
-  largeImage: `/assets/images/doodle_hola_mahalla.png`,
-  smallImage: `/assets/images/doodle_hola_mahalla_sm.png`,
-  title: `Celebrating the 319th Hola Mahalla this month of March`,
-  credit: `Special thanks to <a target="_blank" href="https://instagram.com/immersedinyou">@immersedinyou</a> for the amazing artwork`,
-  date: new Date('April 1, 2020'), //will stop showing after 1st april 2020
-}
