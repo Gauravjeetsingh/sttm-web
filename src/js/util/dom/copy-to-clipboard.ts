@@ -1,4 +1,3 @@
-
 export const copyToClipboard = (text: string): Promise<any> =>
   new Promise((resolve, reject) => {
     if ('clipboard' in navigator && 'writeText' in navigator.clipboard) {
