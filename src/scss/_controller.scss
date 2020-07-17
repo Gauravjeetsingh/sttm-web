@@ -134,10 +134,25 @@
 
 .controller-shabad {
   .home-button {
-    fill: $sttm-orange;
+    background-color: $sttm-blue;
+    bottom: 30px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px 0 $sttm-grey;
+    fill: $sttm-white;
+    height: 50px;
+    position: fixed;
+    width: 50px;
+    opacity: 0.5;
     outline: none;
     right: 90px;
     z-index: 100;
+
+    &:hover {
+      opacity: 1;
+      svg {
+        fill: $sttm-orange;
+      }
+    }
   }
 
   .line {

@@ -92,6 +92,11 @@ export default class Pankti extends React.PureComponent {
     this.setState({ highlightId: verse });
   }
 
+  scrollToHome = () => {
+    d = this.$homeBaaniLine.click();
+    console.log(d);
+  }
+
   baniLineCategory(node, shabad) {
     if (this.state.highlightId === parseInt(getVerseId(shabad), 10)) {
       this.$highlightedBaaniLine = node;
@@ -152,9 +157,9 @@ export default class Pankti extends React.PureComponent {
         >
           {markup}
         </div>
-        <button className="scroll-to-top home-button"
+        <button className="home-button"
           onClick={() => {
-            this.$homeBaaniLine.click();
+            this.scrollToHome();
           }}>
           <HomeIcon />
         </button>
