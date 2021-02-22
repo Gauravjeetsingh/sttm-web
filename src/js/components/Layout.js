@@ -101,6 +101,7 @@ class Layout extends React.PureComponent {
           isController={isController}
           {...props}
         />
+        <h3>This is from heroku review app</h3>
         {this.state.error ? (
           <GenericError {...this.state.errorProps} />
         ) : (
