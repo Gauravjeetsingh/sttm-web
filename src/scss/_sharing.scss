@@ -1,106 +1,23 @@
 /* ***** Sharing Buttons *****
   https://simplesharingbuttons.com/#code
 */
-#share-menu {
-  border-radius: 2px;
-  height: calc(10px + 2em);
-  margin-bottom: 0.5rem;
-  margin-right: 35px;
-  padding: 0 35px !important;
-
-  a {
-    background-color: transparent !important;
-    color: $sttm-blue;
-
-    .dark-mode & {
-      color: $sttm-light-blue;
-    }
-  }
-
-  @media screen and (max-width: 46em) {
-    margin-right: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-.share-buttons {
-  list-style: none;
-  margin: auto -20px;
-  padding: 5px 0;
-
-  li {
-    display: inline;
-    margin-left: 5px;
-
-    &:first-of-type {
-      margin-left: 0;
-    }
-  }
-
-  .sr-only {
-    border: 0;
-    clip: rect(1px 1px 1px 1px);
-    clip: rect(1px, 1px, 1px, 1px);
-    height: 1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-  }
-
-  @media screen and (max-width: 45.999999em) {
-    margin: auto !important;
-    overflow: hidden;
-    text-align: center;
-    width: 0;
-    z-index: -1;
-  }
-
-  #copy-short-url {
-    position: relative;
-
-    .short-url {
-      &-input {
-        background-color: $sttm-white;
-        display: inline-block;
-        font-size: 11px;
-        height: auto;
-        margin: 0;
-        position: relative;
-        top: -12px;
-        width: 175px;
-
-        .dark-mode & {
-          background-color: $sttm-lighter-black;
-          border-color: $sttm-black;
-          color: $sttm-white;
-        }
-      }
-
-      &-icon {
-        box-shadow: -5px 0 7px -6px $sttm-grey;
-        cursor: copy;
-        height: 0.8em;
-        position: absolute;
-        right: 0;
-        top: -14px;
-        width: 0.8em;
-
-        .dark-mode & {
-          box-shadow: -5px 0 7px -6px $sttm-light-black;
-        }
-      }
-    }
-  }
-}
-
+/* stylelint-disable at-rule-no-unknown */
 .chevron,
-.Hour24 {
-  fill: $sttm-orange;
+.Hour24,
+.reset {
+  fill: $sttm-blue;
+
+  &:hover {
+    fill: $sttm-orange;
+  }
+
+  svg {
+    margin-right: 5px;
+  }
 }
 
 .hukamnama-nav-icon {
-  > span {
+  >span {
     display: block;
     font-size: 0.35em;
   }
@@ -110,6 +27,8 @@
 .share svg {
   fill: $sttm-darker-grey;
   font-size: 2em;
+  max-height: 30px;
+  min-width: 30px;
   padding: 5px;
 
   @media screen and (max-width: 45.999999em) {
@@ -117,12 +36,128 @@
   }
 }
 
-@media screen and (max-width: 45.999999em) {
-  .share-buttons,
-  #share-menu {
-    text-align: left;
-    width: calc(100% - 1rem) !important;
+#controls-menu {
+  border-radius: 2px;
+  margin: 0 2rem 0 auto;
 
+  .fullscreen-view & {
+    display: none;
+  }
+
+  a {
+    background-color: transparent !important;
+    color: $sttm-blue;
+    height: 30px;
+
+    .dark-mode & {
+      color: $sttm-light-blue;
+    }
+  }
+
+  @media screen and (max-width: 790px) {
+    margin: 0 1rem 0 1rem;
+  }
+}
+
+.share-buttons {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  list-style: none;
+  margin: 0;
+  text-align: right;
+
+  @media screen and (max-width: 790px) {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  li {
+    align-items: center;
+    display: flex;
+    margin-left: 5px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    button {
+      align-items: center;
+      color: #999;
+      display: inline-flex;
+      font-weight: 700;
+      justify-content: center;
+
+      &:hover,
+      &.active {
+        span {
+          color: $sttm-orange;
+        }
+
+        svg {
+          fill: $sttm-orange;
+        }
+      }
+    }
+
+    #copy-short-url {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      position: relative;
+
+      .short-url {
+        &-input {
+          background-color: $sttm-white;
+          display: inline-block;
+          font-size: 11px;
+          height: auto;
+          margin: 0;
+          position: relative;
+          width: 175px;
+
+          .dark-mode & {
+            background-color: $sttm-lighter-black;
+            border-color: $sttm-black;
+            color: $sttm-white;
+          }
+
+          @media screen and (max-width: 790px) {
+            display: none;
+          }
+        }
+
+        &-icon {
+          box-shadow: -5px 0 7px -6px $sttm-grey;
+          cursor: copy;
+          height: 1.2em;
+          position: absolute;
+          right: 0;
+          width: 0.8em;
+
+          .dark-mode & {
+            box-shadow: -5px 0 7px -6px $sttm-light-black;
+          }
+
+          @media screen and (max-width: 790px) {
+            box-shadow: none;
+            position: relative;
+          }
+        }
+      }
+    }
+  }
+}
+
+#search-options,
+.search-options {
+  @include select_highlight();
+}
+
+@media screen and (max-width: 45.999999em) {
+
+  .share-buttons,
+  #controls-menu {
     .dark-mode & {
       background-color: $sttm-light-black;
     }
@@ -139,15 +174,17 @@
   font-weight: 400;
   left: 0;
   margin: 0 auto;
-  padding: 0.8rem 1.8rem;
+  padding: 0.8rem 4.8rem 0.8rem 1.8rem;
   position: fixed;
   right: 0;
   text-align: center;
-  width: 30vw;
+  width: 80vw;
   z-index: 6;
 
   .toast-notification-close-button {
-    margin: 0.6em;
+    float: right;
+    font-size: 44px;
+    margin: 0.1em 0.6em;
     position: absolute;
     right: 0;
     top: 0;
@@ -163,10 +200,11 @@
 
   @media screen and (max-width: 45.999999em) {
     border-radius: 0;
-    bottom: 0;
     box-shadow: none;
     font-size: 0.8rem;
+    height: fit-content;
     text-align: left;
+    top: 0;
     width: 100vw;
   }
 

@@ -1,8 +1,12 @@
 /* globals BANNERS_URL */
 import React from 'react';
 
-import { saveToLocalStorage, getStringFromLocalStorage } from '@/util';
-import { dateMath } from '../util/index.js';
+import {
+  dateMath,
+  saveToLocalStorage,
+  getStringFromLocalStorage
+} from '@/util';
+
 import CrossIcon from './Icons/Times';
 
 export default class Banner extends React.PureComponent {
@@ -21,16 +25,18 @@ export default class Banner extends React.PureComponent {
       .then(messages => {
         const { rows } = messages;
 
-        const unreadNotifications = rows.filter(notification => {
-          const { ID } = notification;
-          const lastSeen = getStringFromLocalStorage(`banner-${ID}`);
+        if (rows.length) {
+          const unreadNotifications = rows.filter(notification => {
+            const { ID } = notification;
+            const lastSeen = getStringFromLocalStorage(`banner-${ID}`);
 
-          if (lastSeen) return dateMath.isAfter(date, lastSeen);
+            if (lastSeen) return dateMath.isAfter(date, lastSeen);
 
-          return true;
-        });
+            return true;
+          });
 
-        this.setState({ date, notifications: unreadNotifications });
+          this.setState({ date, notifications: unreadNotifications });
+        }
       }
       );
   }

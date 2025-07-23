@@ -11,3 +11,8 @@ yarn.lock
 *.swp
 *.map
 .idea/
+cypress/screenshots/**/*.*
+cypress/videos/**/*.*
+.env
+.env.develop
+venv-gyp/*

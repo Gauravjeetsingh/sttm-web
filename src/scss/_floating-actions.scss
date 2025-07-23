@@ -1,0 +1,162 @@
+.floatingActions {
+  align-items: center;
+  background-color: $sttm-blue;
+  border-radius: 40px;
+  bottom: 30px;
+  box-shadow: 0 4px 8px 0 $sttm-grey;
+  display: flex;
+  height: 50px;
+  max-width: 480px;
+  opacity: 0.5;
+  padding: 8px 16px;
+  position: fixed;
+  right: 24px;
+  transition: all 0.2s ease-in;
+  width: auto;
+  z-index: 99;
+
+  @media screen and (max-width: 600px) {
+    opacity: 1;
+  }
+
+  .dark-mode & {
+    box-shadow: 0 2px 4px 0 $sttm-grey;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &Bottom {
+    bottom: 30px;
+    right: 24px;
+  }
+
+  &Control {
+    margin: 0 9px;
+  }
+
+  &Icons {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  &Top {
+    bottom: auto;
+    left: 24px;
+    height: 36px;
+    padding: 0;
+    position: absolute;
+    right: 24px;
+    top: 10px;
+    width: 36px;
+
+    @media screen and (max-width: 70em) {
+      height: 24px;
+      width: 24px;
+
+      svg {
+        height: 18px;
+        width: 18px;
+      }
+    }
+  }
+
+  &TopIcon {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.settingsButton {
+  align-items: center;
+  display: flex;
+  fill: $sttm-white;
+
+  &:hover,
+  &.active {
+    svg {
+      fill: $sttm-orange;
+    }
+  }
+}
+
+.ai-button {
+  align-items: center;
+  display: flex;
+  fill: $sttm-orange;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    svg {
+      fill: $sttm-orange;
+      transform: scale(1.1);
+    }
+  }
+
+  &.active {
+    svg {
+      fill: $sttm-white;
+      animation: none;
+    }
+  }
+
+  svg {
+    transition: all 0.3s ease;
+    animation: aiPulse 2s infinite;
+  }
+}
+
+@keyframes aiPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.no-shadow {
+  box-shadow: none;
+
+  .dark-mode & {
+    box-shadow: none;
+  }
+}
+
+.no-float {
+  bottom: auto;
+  left: auto;
+  position: static;
+  right: auto;
+  top: auto;
+}
+
+
+.display-settings-icon {
+  display: flex;
+}
+
+@media screen and (max-width: 69.99em) {
+  .below-top-search {
+    left: 48px;
+    top: 10px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .below-top-search {
+    top: 16px;
+  }
+}

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import Pagination from '../../components/Pagination';
 import { toShabadURL, toSearchURL } from '../../util';
 import { TYPES, SOURCES, PLACEHOLDERS, TEXTS } from '../../constants';
@@ -11,19 +12,16 @@ import {
   errorEvent,
   clickEvent,
 } from '../../util/analytics';
-import Controls from '../../components/Controls';
+import Controls, { supportedMedia } from '../../components/Controls';
 import GenericError, { SachKaur } from '../../components/GenericError';
 import SearchResults from '../../components/SearchResults/SearchResults';
+import Breadcrumb from '@/components/Breadcrumb';
 
 export function Stub() {
   return <div className="spinner" />;
 }
 
 class Layout extends React.PureComponent {
-  static contextTypes = {
-    router: PropTypes.object,
-  };
-
   static propTypes = {
     pages: PropTypes.array,
     offset: PropTypes.number,
@@ -61,12 +59,15 @@ class Layout extends React.PureComponent {
           description={
             <React.Fragment>
               {TEXTS.NO_RESULTS_FOUND_DESCRIPTION(SOURCES[source], TYPES[type])}
-              <Link to="/help#Desktop-i-cant-find-my-shabad.">
-                {' '}
+              <a
+                href="https://support.khalisfoundation.org/support/home"
+                rel="noopener"
+                aria-label={TEXTS.HELP_SECTION}
+              >
                 {TEXTS.HELP_SECTION}
-              </Link>
+              </a>
               .
-            </React.Fragment>
+            </ React.Fragment>
           }
           image={SachKaur}
         />
@@ -83,7 +84,10 @@ class Layout extends React.PureComponent {
 
     return (
       <div className="row" id="content-root">
-        <Controls media={[]} disableSplitView hideAlignOption />
+        <Breadcrumb links={[{ title: TEXTS.URIS.SEARCH_RESULTS }]} />
+        <Controls media={
+          supportedMedia.filter(m => (m === 'multiView' || m === 'settings' || m === 'random'))
+        } />
         <SearchResults
           q={q}
           type={type}
@@ -101,7 +105,7 @@ class Layout extends React.PureComponent {
     );
   }
 
-  handlePageClick = pageNumber => {
+  handlePageClick = (pageNumber) => {
     const { q, type, source, offset } = this.props;
 
     const currentPage = offset;
@@ -112,7 +116,7 @@ class Layout extends React.PureComponent {
 
     clickEvent({ action: TEXTS.OPEN_PAGE, label: pageNumber });
     window.scrollTo(0, 0);
-    this.context.router.history.push(
+    this.props.history.push(
       toSearchURL({
         query: q,
         type,
@@ -128,5 +132,5 @@ class Layout extends React.PureComponent {
   }
 }
 
-const stateToProps = state => state;
-export default connect(stateToProps)(Layout);
+const stateToProps = (state) => state;
+export default connect(stateToProps)(withRouter(Layout));

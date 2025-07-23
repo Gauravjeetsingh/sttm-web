@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 
 import SearchResult from './Result';
+import { SEARCH_TYPES } from '@/constants';
 import { getVerseId } from '@/util/api/shabad';
+import AskGurbaniBotSearch from './AskGurbaniBotSearch';
 
 export default class SearchResults extends React.PureComponent {
   static propTypes = {
@@ -20,16 +23,41 @@ export default class SearchResults extends React.PureComponent {
   };
 
   render() {
-    const { shabads, ...props } = this.props;
+    const { shabads, type, ...props } = this.props;
+    const searchResultsClassName = cx({
+      'search-results-display': true,
+      'english-translation-search': type === SEARCH_TYPES.ENGLISH_WORD,
+      'main-letter-search': type === SEARCH_TYPES.MAIN_LETTERS
+    });
+    const askGurbaniBotSearchType = type === SEARCH_TYPES['ASK_A_QUESTION'];
+
+    const warning = askGurbaniBotSearchType && (
+      <div className='warning-box'>
+        <h4>⚠ This is an experimental feature.</h4>
+        <p>Please <a href="https://support.khalisfoundation.org/support/tickets/new" target="blank">
+          <u>get in touch</u></a> with us if you have any concerns or feedback.
+        </p>
+      </div>
+    );
 
     return (
-      <ul className="search-results display">
-        {shabads.map(shabad => {
-          return (
-            <SearchResult key={getVerseId(shabad)} shabad={shabad} {...props} />
-          );
-        })}
-      </ul>
+      <>
+        {askGurbaniBotSearchType && <AskGurbaniBotSearch query={this.props.q || ""} />}
+        {warning}
+        <ul className={searchResultsClassName}>
+          {
+            shabads.map((shabad) => {
+              return (
+                <SearchResult
+                  key={getVerseId(shabad)}
+                  type={type}
+                  shabad={shabad}
+                  {...props} />
+              );
+            })
+          }
+        </ul>
+      </>
     );
   }
 }

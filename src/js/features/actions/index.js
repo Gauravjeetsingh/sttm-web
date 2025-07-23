@@ -1,18 +1,32 @@
 import {
+  DEFAULT_LARIVAAR_ASSIST_STRENGTH,
+  DEFAULT_ENGLISH_TRANSLATION_LANGUAGES,
   DEFAULT_TRANSLATION_LANGUAGES,
+  DEFAULT_TRANSLATION_FONT_SIZE,
+  DEFAULT_STEEK_LANGUAGES,
   DEFAULT_TRANSLITERATION_LANGUAGES,
+  DEFAULT_TRANSLITERATION_FONT_SIZE,
+  DEFAULT_FONT_SIZE,
   DEFAULT_DARK_MODE,
+  DEFAULT_AUTO_SCROLL_MODE,
+  DEFAULT_IS_AUTOSCROLLING,
+  DEFAULT_PARAGRAPH_MODE,
+  DEFAULT_LINE_HEIGHT,
   DEFAULT_VISRAAMS,
   DEFAULT_VISRAAM_SOURCE,
   DEFAULT_VISRAAM_STYLE,
   DEFAULT_UNICODE,
-  DEFAULT_FONT_SIZE,
   DEFAULT_FONT_FAMILY,
   DEFAULT_CENTER_ALIGN_GURBANI,
   DEFAULT_SPLIT_VIEW,
+  DEFAULT_READING_MODE,
+  DEFAULT_SEHAJ_PAATH_MODE,
+  DEFAULT_SG_BAANI_LENGTH,
+  DEFAULT_CARTOONIFIED_PAGES,
+  DEFAULT_SHABAD_AUDIO_PLAYER
 } from '../../constants';
 
-export const createAction = (type, meta) => payload => ({
+export const  createAction = (type, meta) => (payload) => ({
   type,
   meta,
   payload,
@@ -21,22 +35,49 @@ export const createAction = (type, meta) => payload => ({
 export const SET_ONLINE_MODE = 'SET_ONLINE_MODE';
 export const setOnlineMode = createAction(SET_ONLINE_MODE);
 
-export const TOGGLE_DISPLAY_OPTIONS = 'TOGGLE_DISPLAY_OPTIONS';
-export const toggleDisplayOptions = createAction(TOGGLE_DISPLAY_OPTIONS);
+export const TOGGLE_ADVANCED_OPTIONS = 'TOGGLE_ADVANCED_OPTIONS';
+export const toggleAdvancedOptions = createAction(TOGGLE_ADVANCED_OPTIONS);
 
-export const TOGGLE_FONT_OPTIONS = 'TOGGLE_FONT_OPTIONS';
-export const toggleFontOptions = createAction(TOGGLE_FONT_OPTIONS);
+export const TOGGLE_SETTINGS_PANEL = 'TOGGLE_SETTINGS_PANEL';
+export const toggleSettingsPanel = createAction(TOGGLE_SETTINGS_PANEL);
+
+export const SET_SETTINGS_PANEL = 'SET_SETTINGS_PANEL';
+export const setSettingsPanel = createAction(SET_SETTINGS_PANEL);
+
+export const TOGGLE_KEYBOARD_SHORTCUTS_PANEL =
+  'TOGGLE_KEYBOARD_SHORTCUTS_PANEL';
+export const toggleKeyboardShortcutsPanel = createAction(
+  TOGGLE_KEYBOARD_SHORTCUTS_PANEL
+);
+
+export const SET_KEYBOARD_SHORTCUTS_PANEL = 'SET_KEYBOARD_SHORTCUTS_PANEL';
+export const setKeyboardShortcutsPanel = createAction(
+  SET_KEYBOARD_SHORTCUTS_PANEL
+);
 
 export const TOGGLE_DARK_MODE = 'TOGGLE_DARK_MODE';
 export const toggleDarkMode = createAction(TOGGLE_DARK_MODE);
 
+export const TOGGLE_MAHAAN_KOSH_TOOLTIP = 'TOGGLE_MAHAAN_KOSH_TOOLTIP';
+export const toggleMahaanKoshTooltip = createAction(TOGGLE_MAHAAN_KOSH_TOOLTIP);
+
 export const TOGGLE_VISRAAMS = 'TOGGLE_VISRAAMS';
 export const toggleVisraams = createAction(TOGGLE_VISRAAMS);
+
+export const TOGGLE_AUTO_SCROLL_MODE = 'TOGGLE_AUTO_SCROLL_MODE';
+
+export const toggleAutoScrollMode = createAction(TOGGLE_AUTO_SCROLL_MODE);
 
 export const TOGGLE_TRANSLATION_OPTIONS = 'TOGGLE_TRANSLATION_OPTIONS';
 export const toggleTranslationOptions = createAction(
   TOGGLE_TRANSLATION_OPTIONS
 );
+
+export const TOGGLE_PARAGRAPH_MODE = 'TOGGLE_PARAGRAPH_MODE';
+export const toggleParagraphMode = createAction(TOGGLE_PARAGRAPH_MODE);
+
+export const TOGGLE_SEHAJ_PAATH_MODE = 'TOGGLE_SEHAJ_PAATH_MODE';
+export const toggleSehajPaathMode = createAction(TOGGLE_SEHAJ_PAATH_MODE);
 
 export const TOGGLE_TRANSLITERATION_OPTIONS = 'TOGGLE_TRANSLITERATION_OPTIONS';
 export const toggleTransliterationOptions = createAction(
@@ -54,6 +95,18 @@ export const toggleLarivaarAssistOption = createAction(
 export const TOGGLE_SPLIT_VIEW_OPTION = 'TOGGLE_SPLIT_VIEW_OPTION';
 export const toggleSplitViewOption = createAction(TOGGLE_SPLIT_VIEW_OPTION);
 
+export const TOGGLE_CARTOONIFIED_PAGES = 'TOGGLE_CARTOONIFIED_PAGES';
+export const toggleCartoonifiedPages = createAction(TOGGLE_CARTOONIFIED_PAGES);
+
+export const TOGGLE_SHABAD_AUDIO_PLAYER = 'TOGGLE_SHABAD_AUDIO_PLAYER';
+export const toggleShabadAudioPlayer = createAction(TOGGLE_SHABAD_AUDIO_PLAYER);
+
+export const TOGGLE_READING_MODE = 'TOGGLE_READING_MODE';
+export const toggleReadingMode = createAction(TOGGLE_READING_MODE);
+
+export const SET_AUTOSCROLLING = 'SET_AUTOSCROLLING';
+export const setAutoScrolling = createAction(SET_AUTOSCROLLING);
+
 export const SET_VISRAAM_SOURCE = 'SET_VISRAAM_SOURCE';
 export const setVisraamSource = createAction(SET_VISRAAM_SOURCE);
 
@@ -63,12 +116,48 @@ export const setVisraamStyle = createAction(SET_VISRAAM_STYLE);
 export const SET_UNICODE = 'SET_UNICODE';
 export const setUnicode = createAction(SET_UNICODE);
 
+export const SET_FULLSCREEN_MODE = 'SET_FULLSCREEN_MODE';
+export const setFullScreenMode = createAction(SET_FULLSCREEN_MODE);
+
 export const SET_FONT_SIZE = 'SET_FONT_SIZE';
-export const setFontSize = createAction(SET_FONT_SIZE, {
-  debounce: {
-    time: 300,
-  },
-});
+export const setFontSize = createAction(SET_FONT_SIZE);
+
+export const SET_TRANSLATION_FONT_SIZE = 'SET_TRANSLATION_FONT_SIZE';
+export const setTranslationFontSize = createAction(SET_TRANSLATION_FONT_SIZE);
+
+export const SET_TRANSLITERATION_FONT_SIZE = 'SET_TRANSLITERATION_FONT_SIZE';
+export const setTransliterationFontSize = createAction(
+  SET_TRANSLITERATION_FONT_SIZE
+);
+
+export const SET_STEEK_LANGUAGES = 'SET_STEEK_LANGUAGES';
+export const setSteekLanguages = createAction(SET_STEEK_LANGUAGES);
+
+export const SET_ENGLISH_TRANSLATION_LANGUAGES =
+  'SET_ENGLISH_TRANSLATION_LANGUAGES';
+export const setEnglishTranslationLanguages = createAction(
+  SET_ENGLISH_TRANSLATION_LANGUAGES
+);
+
+export const SET_HINDI_TRANSLATION_LANGUAGES =
+  'SET_HINDI_TRANSLATION_LANGUAGES';
+export const setHindiTranslationLanguages = createAction(
+  SET_HINDI_TRANSLATION_LANGUAGES
+);
+
+export const SET_LARIVAAR_ASSIST_STRENGTH = 'SET_LARIVAAR_ASSIST_STRENGTH';
+export const setLarivaarAssistStrength = createAction(
+  SET_LARIVAAR_ASSIST_STRENGTH
+);
+
+export const SET_LINE_HEIGHT = 'SET_LINE_HEIGHT';
+export const setLineHeight = createAction(SET_LINE_HEIGHT);
+
+export const SET_PARAGRAPH_MODE = 'SET_PARAGRAPH_MODE';
+export const setParagraphMode = createAction(SET_PARAGRAPH_MODE);
+
+export const SET_SEHAJ_PAATH_MODE = 'SET_SEHAJ_PAATH_MODE';
+export const setSehajPaathMode = createAction(SET_SEHAJ_PAATH_MODE);
 
 export const SET_TRANSLATION_LANGUAGES = 'SET_TRANSLATION_LANGUAGES';
 export const setTranslationLanguages = createAction(SET_TRANSLATION_LANGUAGES);
@@ -77,9 +166,17 @@ export const SET_TRANSLITERATION_LANGUAGES = 'SET_TRANSLITERATION_LANGUAGES';
 export const setTransliterationLanguages = createAction(
   SET_TRANSLITERATION_LANGUAGES
 );
-
 export const SET_DARK_MODE = 'SET_DARK_MODE';
 export const setDarkMode = createAction(SET_DARK_MODE);
+
+export const SET_CARTOONIFIED_PAGES = 'SET_CARTOONIFIED_PAGES';
+export const setCartoonifiedPages = createAction(SET_CARTOONIFIED_PAGES);
+
+export const SET_SHABAD_AUDIO_PLAYER = 'SET_SHABAD_AUDIO_PLAYER';
+export const setShabadAudioPlayer = createAction(SET_SHABAD_AUDIO_PLAYER);
+
+export const SET_AUTO_SCROLL_MODE = 'SET_AUTO_SCROLL_MODE';
+export const setAutoScrollMode = createAction(SET_AUTO_SCROLL_MODE);
 
 export const SET_VISRAAMS = 'SET_VISRAAMS';
 export const setVisraams = createAction(SET_VISRAAMS);
@@ -87,24 +184,78 @@ export const setVisraams = createAction(SET_VISRAAMS);
 export const SET_SPLIT_VIEW = 'SET_SPLIT_VIEW';
 export const setSplitView = createAction(SET_SPLIT_VIEW);
 
-export const resetDisplayOptions = () => dispatch => {
+export const SET_READING_MODE = 'SET_READING_MODE';
+export const setReadingMode = createAction(SET_READING_MODE);
+
+export const SET_SG_BAANI_LENGTH = 'SET_SG_BAANI_LENGTH';
+export const setSgBaaniLength = createAction(SET_SG_BAANI_LENGTH);
+
+export const SET_MULTIPLE_SHABADS = 'SET_MULTIPLE_SHABADS';
+export const setMultipleShabads = createAction(SET_MULTIPLE_SHABADS);
+
+export const CLEAR_MULTIPLE_SHABADS = 'CLEAR_MULTIPLE_SHABADS';
+export const clearMultipleShabads = createAction(CLEAR_MULTIPLE_SHABADS);
+
+export const REMOVE_MULTIPLE_SHABADS = 'REMOVE_MULTIPLE_SHABADS';
+export const removeMultipleShabads = createAction(REMOVE_MULTIPLE_SHABADS);
+
+export const SET_MULTI_VIEW_PANEL = 'SET_MULTI_VIEW_PANEL';
+export const setMultiViewPanel = createAction(SET_MULTI_VIEW_PANEL);
+
+export const SET_PIN_SETTINGS = 'SET_PIN_SETTINGS';
+export const setPinSettings = createAction(SET_PIN_SETTINGS);
+
+export const SET_PREFETCH_ANG = 'SET_PREFETCH_ANG';
+export const SET_LOADING_ANG = 'SET_LOADING_ANG';
+export const SET_MAHANKOSH_TOOLTIP_ACTIVE = 'SET_MAHANKOSH_TOOLTIP_ACTIVE';
+export const SET_MAHANKOSH_TOOLTIP_EXPLAINATION =
+  'SET_MAHANKOSH_TOOTIP_EXPLAINATION';
+
+export const SET_ERROR = 'SET_ERROR';
+
+export const SET_IS_MODAL_OPEN = 'SET_IS_MODAL_OPEN';
+export const setIsModalOpen = createAction(SET_IS_MODAL_OPEN);
+
+export const SET_MODAL_OPENED = 'SET_MODAL_OPENED'
+export const setModalOpen = createAction(SET_MODAL_OPENED);
+
+export const SET_GURBANI_VERSES = 'SET_GURBANI_VERSES';
+export const setGurbaniVerses = createAction(SET_GURBANI_VERSES); 
+
+export const resetDisplayOptions = () => (dispatch) => {
   dispatch(setTransliterationLanguages(DEFAULT_TRANSLITERATION_LANGUAGES));
   dispatch(setTranslationLanguages(DEFAULT_TRANSLATION_LANGUAGES));
+  dispatch(
+    setEnglishTranslationLanguages(DEFAULT_ENGLISH_TRANSLATION_LANGUAGES)
+  );
+  dispatch(setSteekLanguages(DEFAULT_STEEK_LANGUAGES));
   dispatch(setDarkMode(DEFAULT_DARK_MODE));
+  dispatch(setAutoScrollMode(DEFAULT_AUTO_SCROLL_MODE));
+  dispatch(setAutoScrolling(DEFAULT_IS_AUTOSCROLLING));
+  dispatch(setParagraphMode(DEFAULT_PARAGRAPH_MODE));
   dispatch(setVisraams(DEFAULT_VISRAAMS));
   dispatch(setVisraamSource(DEFAULT_VISRAAM_SOURCE));
   dispatch(setVisraamStyle(DEFAULT_VISRAAM_STYLE));
   dispatch(setCenterAlignOption(DEFAULT_CENTER_ALIGN_GURBANI));
+  dispatch(setLarivaarAssistStrength(DEFAULT_LARIVAAR_ASSIST_STRENGTH));
   dispatch(setSplitView(DEFAULT_SPLIT_VIEW));
+  dispatch(setReadingMode(DEFAULT_READING_MODE));
+  dispatch(setSehajPaathMode(DEFAULT_SEHAJ_PAATH_MODE));
+  dispatch(setSgBaaniLength(DEFAULT_SG_BAANI_LENGTH));
+  dispatch(setCartoonifiedPages(DEFAULT_CARTOONIFIED_PAGES));
+  dispatch(setShabadAudioPlayer(DEFAULT_SHABAD_AUDIO_PLAYER));
 };
 
 export const CHANGE_FONT = 'CHANGE_FONT';
 export const changeFont = createAction(CHANGE_FONT);
 
-export const resetFontOptions = () => dispatch => {
+export const resetFontOptions = () => (dispatch) => {
   dispatch(setUnicode(DEFAULT_UNICODE));
   dispatch(setFontSize(DEFAULT_FONT_SIZE));
+  dispatch(setTranslationFontSize(DEFAULT_TRANSLATION_FONT_SIZE));
+  dispatch(setTransliterationFontSize(DEFAULT_TRANSLITERATION_FONT_SIZE));
   dispatch(changeFont(DEFAULT_FONT_FAMILY));
+  dispatch(setLineHeight(DEFAULT_LINE_HEIGHT));
 };
 
 export const SET_CENTER_ALIGN_OPTION = 'SET_CENTER_ALIGN_OPTION';
@@ -113,4 +264,18 @@ export const setCenterAlignOption = createAction(SET_CENTER_ALIGN_OPTION);
 export const toggleCenterAlignOption = () => (dispatch, getState) => {
   const state = getState();
   dispatch(setCenterAlignOption(!state.centerAlignGurbani));
+};
+
+export const closeSettingsPanel = () => (dispatch) => {
+  dispatch(setSettingsPanel(false));
+  dispatch(setKeyboardShortcutsPanel(false));
+  dispatch(setPinSettings(false));
+};
+
+export const closeMultiViewPanel = () => (dispatch) => {
+  dispatch(setMultiViewPanel(false));
+};
+
+export const closePinSettings = () => (dispatch) => {
+  dispatch(setPinSettings(false));
 };

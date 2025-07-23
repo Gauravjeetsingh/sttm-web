@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
-import { toNavURL, shouldSaveAng, saveAng, dateMath } from '../util';
+import { toNavURL, dateMath } from '../util';
 import Chevron from './Icons/Chevron';
 import Hour24 from './Icons/Hour24';
 
@@ -19,54 +19,69 @@ class FootNav extends React.PureComponent {
   render() {
     const { nav, type } = this.props;
     const link = toNavURL(this.props);
+    const isHukamnama = type === 'hukamnama';
+    const isSync = type === 'sync';
     return (
-      <div className="pagination">
+      <div className={`pagination pagination-${type}`}>
+        {/* Previous navigation */}
         {nav.previous ? (
           <div className="shabad-nav left">
             <Link to={link + nav.previous}>
-              {type === 'hukamnama' ? (
-                <Hour24 direction='previous' />
+              {isHukamnama ? (
+                <Hour24 direction="previous" />
               ) : (
-                  <Chevron direction={Chevron.DIRECTIONS.LEFT} />
-                )}
-              <span>{type === 'hukamnama' ? dateMath.expand(nav.previous, false) : 'Previous'}</span>
+                <Chevron direction={Chevron.DIRECTIONS.LEFT} />
+              )}
+              <span>
+                {isHukamnama
+                  ? dateMath.expand(nav.previous, false)
+                  : 'Previous'}
+              </span>
             </Link>
           </div>
-        ) : type !== 'sync' ? (
+        ) : !isSync ? (
           <div className="shabad-nav left disabled-nav">
             <a>
-              {type === 'hukamnama' ? (
-                <Hour24 direction='previous' />
+              {isHukamnama ? (
+                <Hour24 direction="previous" />
               ) : (
-                  <Chevron direction={Chevron.DIRECTIONS.LEFT} />
-                )}
-              <span>{type === 'hukamnama' ? '' : 'Previous'}</span>
+                <Chevron direction={Chevron.DIRECTIONS.LEFT} />
+              )}
+              <span>{isHukamnama ? '' : 'Previous'}</span>
             </a>
           </div>
-        ) : ''}
+        ) : (
+          ''
+        )}
+
+        {/* Next navigation */}
         {nav.next ? (
           <div className="shabad-nav right">
             <a role="button" aria-label="next" onClick={this.goToNextAng}>
-              <span>{type === 'hukamnama' ? dateMath.expand(nav.next, false) : 'Next'}</span>
-              {type === 'hukamnama' ? (
-                <Hour24 direction='Next' />
+              <span>
+                {isHukamnama ? dateMath.expand(nav.next, false) : 'Next'}
+              </span>
+              {isHukamnama ? (
+                <Hour24 direction="Next" />
               ) : (
-                  <Chevron direction={Chevron.DIRECTIONS.RIGHT} />
-                )}
+                <Chevron direction={Chevron.DIRECTIONS.RIGHT} />
+              )}
             </a>
           </div>
-        ) : type !== 'sync' ? (
+        ) : !isSync ? (
           <div className="shabad-nav right disabled-nav">
             <a>
-              <span>{type === 'hukamnama' ? '' : 'Next'}</span>
-              {type === 'hukamnama' ? (
-                <Hour24 direction='next' />
+              <span>{isHukamnama ? '' : 'Next'}</span>
+              {isHukamnama ? (
+                <Hour24 direction="next" />
               ) : (
-                  <Chevron direction={Chevron.DIRECTIONS.RIGHT} />
-                )}
+                <Chevron direction={Chevron.DIRECTIONS.RIGHT} />
+              )}
             </a>
           </div>
-        ) : ''}
+        ) : (
+          ''
+        )}
       </div>
     );
   }

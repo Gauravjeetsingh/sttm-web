@@ -1,39 +1,102 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import LarivaarWord from './Word';
 import HighlightedSearchResult from '../SearchResults/HighlightedResult';
-import { getVisraamClass } from '@/util/index';
 
-export interface ILarivaarProps {
+import { getVisraamClass } from '../../util';
+import { getLarivaarAssistColor } from '@/features/selectors';
+import { SET_MAHANKOSH_TOOLTIP_ACTIVE } from '@/features/actions';
+import { MahankoshContext } from '@/context';
+import { getMahankoshTooltipAttributes } from '../MahankoshTooltip/util';
+
+export interface Props {
   larivaarAssist?: boolean;
-  startIndex?: number;
-  endIndex?: number;
+  highlightIndex?: number[];
   enable?: boolean;
   unicode: boolean;
   children: string;
   query: string;
-  visraam: object;
+  visraam: Object;
+  isVisraam: boolean;
+  isShowMahankoshTooltip?: boolean;
 }
 
-function Larivaar(props: ILarivaarProps) {
+export const Larivaar = ({
+  highlightIndex,
+  larivaarAssist,
+  enable = true,
+  children,
+  unicode,
+  query,
+  visraam,
+  isVisraam,
+  isShowMahankoshTooltip = false,
+}: Props) => {
+  const dispatch = useDispatch();
   const {
-    startIndex,
-    endIndex,
-    larivaarAssist = false,
-    enable = true,
-    children,
-    unicode,
-    query,
-    visraam,
-  } = props;
+    selectedLine,
+    selectedWordIndex,
+    currentLine,
+    setMahankoshInformation
+  } = useContext(MahankoshContext);
+  const larivaarAssistColor = useSelector((state) =>
+    getLarivaarAssistColor(state)
+  );
+  const isDarkMode = useSelector((state) => state.darkMode);
+  const isMahaanKoshTooltipEnabled = useSelector(
+    (state) => state.mahaanKoshTooltip
+  );
 
+  // closure implementation
+  const handleMahankoshMouseEnter = (currentLine: number) => {
+    return (selectedWord: string, selectedWordIndex: number) => {
+
+      //Clear any existing instance of the active tooltip before setting new word
+      dispatch({ type: SET_MAHANKOSH_TOOLTIP_ACTIVE, payload: false });
+
+      setMahankoshInformation({
+        selectedLine: currentLine,
+        selectedWord,
+        selectedWordIndex,
+      })
+    }
+  }
+
+  const handleGurbaniShabadClick = () => {
+    dispatch({type: SET_MAHANKOSH_TOOLTIP_ACTIVE, payload: true})
+  }
+
+  const handleClearMahankoshTooltip = () => {
+    dispatch({ type: SET_MAHANKOSH_TOOLTIP_ACTIVE, payload: false })
+  }
+
+  const mahankoshIndex = selectedWordIndex > -1 && currentLine === selectedLine ? selectedWordIndex : -1;
+  const handleMahankoshWordStore = handleMahankoshMouseEnter(currentLine)  
+
+  // If larivaar is disabled
   if (!enable) {
+    if (!isMahaanKoshTooltipEnabled) {
+      return (
+        <HighlightedSearchResult
+          highlightIndex={highlightIndex}
+          query={query}
+          visraams={visraam}
+        >
+          {children}
+        </HighlightedSearchResult>
+      );
+    }
     return (
       <HighlightedSearchResult
-        startIndex={startIndex}
-        endIndex={endIndex}
+        isShowMahankoshTooltip={isShowMahankoshTooltip}
+        mahankoshIndex={mahankoshIndex}
+        highlightIndex={highlightIndex}
         query={query}
         visraams={visraam}
+        onMouseLeave={handleClearMahankoshTooltip}
+        onClick={handleGurbaniShabadClick}
+        onMouseEnter={handleMahankoshWordStore}
       >
         {children}
       </HighlightedSearchResult>
@@ -47,21 +110,54 @@ function Larivaar(props: ILarivaarProps) {
           return `${word} `;
         }
 
-        const highlight = word.includes(query);
-        const visraamClass = getVisraamClass(children, word, visraam);
+        const isBothLarivaarAssistAndVisraam = isVisraam && larivaarAssist;
+
+        const visraamClass = getVisraamClass({akharIndex: index, visraams: visraam, isBothLarivaarAssistAndVisraam});
+        let akharClass = '';
+
+        if (isShowMahankoshTooltip && isMahaanKoshTooltipEnabled) {
+          akharClass += ' mahankoshSelectedGurbaniWord';
+        }
+
+        const mahankoshTooltipAttributes =
+          isShowMahankoshTooltip && isMahaanKoshTooltipEnabled
+            ? getMahankoshTooltipAttributes({ isDarkMode, content: word })
+            : {};
 
         return (
-          <LarivaarWord
-            startIndex={startIndex}
-            endIndex={endIndex}
+          <span
             key={index}
-            word={word}
-            unicode={unicode}
-            larivaarAssist={larivaarAssist}
-            index={index}
-            highlight={highlight}
-            visraamClass={visraamClass}
-          />
+            {...mahankoshTooltipAttributes}
+            onMouseEnter={
+              isMahaanKoshTooltipEnabled
+                ? () => {
+                    handleMahankoshWordStore(word, index);
+                  }
+                : undefined
+            }
+            onClick={
+              isMahaanKoshTooltipEnabled ? handleGurbaniShabadClick : undefined
+            }
+            onMouseLeave={
+              isMahaanKoshTooltipEnabled
+                ? handleClearMahankoshTooltip
+                : undefined
+            }
+            className={akharClass}
+          >
+            <LarivaarWord
+              highlightIndex={highlightIndex}
+              key={index}
+              word={word}
+              unicode={unicode}
+              larivaarAssist={larivaarAssist}
+              larivaarAssistColor={larivaarAssistColor}
+              index={index}
+              visraamClass={visraamClass}
+              visraam={visraam}
+              isVisraam={isVisraam}
+            />
+          </span>
         );
       })}
     </>
