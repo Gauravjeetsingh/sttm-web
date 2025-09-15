@@ -35,6 +35,7 @@ import {
 } from '@/util';
 import { MahankoshContext } from '@/context';
 import { changeAng, prefetchAng } from './utils';
+import TranslationRating from '../TranslationRating';
 
 /**
  *
@@ -569,10 +570,18 @@ class Baani extends React.PureComponent {
                       className={`${mixedViewBaaniClass}-translation-${ENGLISH_LANGUAGE} ${paragraphModeClass}`}
                     >
                       {shabads.map((shabad) =>
-                        this.createShabadLine(
+                      <>
+                        <TranslationRating 
+                        translationId={shabad.verseId} 
+                        translationTextEl={this.getTranslationFromLanguageSource(shabad, ENGLISH_LANGUAGE, source)}
+                        translationLanguage={ENGLISH_LANGUAGE}
+                        translationSource={source}
+                        />
+                        {this.createShabadLine(
                           shabad,
                           this.getTranslationFromLanguageSource(shabad, ENGLISH_LANGUAGE, source)
-                        )
+                        )}
+                      </>
                       )}
                     </div>
                   ))}
@@ -589,10 +598,18 @@ class Baani extends React.PureComponent {
                         className={`${mixedViewBaaniClass}-translation-${SPANISH_LANGUAGE} ${paragraphModeClass}`}
                       >
                         {shabads.map((shabad) =>
-                          this.createShabadLine(
+                        <>
+                        <TranslationRating 
+                        translationId={shabad.verseId} 
+                        translationTextEl={this.getTranslationForLanguage(shabad, SPANISH_LANGUAGE)}
+                        translationLanguage={SPANISH_LANGUAGE}
+                        translationSource={''}
+                        />
+                          {this.createShabadLine(
                             shabad,
                             this.getTranslationForLanguage(shabad, SPANISH_LANGUAGE)
-                          )
+                          )}
+                          </>
                         )}
                       </div>                      
                     </>
@@ -608,10 +625,19 @@ class Baani extends React.PureComponent {
                       className={`${mixedViewBaaniClass}-steek-${language} ${paragraphModeClass}`}
                     >
                       {shabads.map((shabad) =>
-                        this.createShabadLine(
+                      <>
+                      
+                      <TranslationRating 
+                        translationId={shabad.verseId} 
+                        translationTextEl={this.getSteekForLanguage(shabad, language)}
+                        translationLanguage={language}
+                        translationSource={language}
+                        />
+                        {this.createShabadLine(
                           shabad,
                           this.getSteekForLanguage(shabad, language)
-                        )
+                        )}
+                      </>
                       )}
                     </div>
                   ))}
@@ -626,10 +652,18 @@ class Baani extends React.PureComponent {
                       className={`${mixedViewBaaniClass}-translation-${HINDI_LANGUAGE} ${paragraphModeClass}`}
                     >
                       {shabads.map((shabad) =>
-                        this.createShabadLine(
+                      <>
+                      <TranslationRating 
+                        translationId={shabad.verseId} 
+                        translationTextEl={this.getTranslationFromLanguageSource(shabad, HINDI_LANGUAGE, source)}
+                        translationLanguage={HINDI_LANGUAGE}
+                        translationSource={source}
+                        />
+                        {this.createShabadLine(
                           shabad,
                           this.getTranslationFromLanguageSource(shabad, HINDI_LANGUAGE, source)
-                        )
+                        )}
+                      </>
                       )}
                     </div>
                   ))}
