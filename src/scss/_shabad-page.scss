@@ -11,6 +11,38 @@ blockquote {
   padding: 0 1.25rem 0 0;
 }
 
+blockquote.translation {
+  &.sahib.singh.english {
+    border-left: 3px solid $sttm-blue;
+    padding-left: 8px;
+
+    &::before {
+      color: $sttm-blue;
+      content: "PS";
+      font-size: 0.7em;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  }
+
+  &.ds.prof.sahib.singh {
+    border-left: 3px solid $sttm-orange;
+    padding-left: 8px;
+
+    &::before {
+      color: $sttm-orange;
+      content: "DS";
+      font-size: 0.7em;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  }
+}
+
 .center-align {
   text-align: center;
 }

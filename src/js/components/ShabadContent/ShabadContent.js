@@ -150,18 +150,30 @@ class Shabad extends React.PureComponent {
     }
   }
 
-  fetchAiTranslations = async (verseIds) => {
+  fetchAiTranslations = async (verseIds, runId) => {
+    const body = { verse_id: verseIds };
+    if (runId !== undefined) {
+      body.run_id = runId;
+    }
     const response = await fetch('/api/ai-translations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ verse_id: verseIds })
+      body: JSON.stringify(body)
     });
     return response.json();
   };
 
-  mergeAiTranslations = (gurbani, data) => {
+  fetchAllAiTranslations = async (verseIds) => {
+    const [data, dsData] = await Promise.all([
+      this.fetchAiTranslations(verseIds),
+      this.fetchAiTranslations(verseIds, 6),
+    ]);
+    return { data, dsData };
+  };
+
+  mergeAiTranslations = (gurbani, data, dsData) => {
     let scholarStatus = false;
     const processed = gurbani.map((verse) => {
       const updatedVerse = { ...verse };
@@ -170,25 +182,35 @@ class Shabad extends React.PureComponent {
       }
 
       const aiTranslation = data.verses[verse.verseId];
+      const dsTranslation = dsData?.verses?.[verse.verseId];
 
-      if (aiTranslation) {
-        if (aiTranslation.text && aiTranslation.text.length > 0) {
+      if (aiTranslation || dsTranslation) {
+        if (aiTranslation && aiTranslation.text && aiTranslation.text.length > 0) {
           scholarStatus = aiTranslation.text[0].is_scholar_reviewed;
         }
         let padArth = '';
         let text = '';
-        const padArthArray = aiTranslation.padArth ? aiTranslation.padArth.sort((a, b) => a.translation_id - b.translation_id) : [];
-        padArthArray.forEach((item) => {
-          const parsed = JSON.parse(item.translation_text);
-          padArth += `${parsed.word.unicode} - ${parsed.english_meaning},  `;
-        });
-        aiTranslation.text.forEach((item) => {
-          text += item.translation_text + ' ';
-        });
+        let dsText = '';
+        if (aiTranslation) {
+          const padArthArray = aiTranslation.padArth ? aiTranslation.padArth.sort((a, b) => a.translation_id - b.translation_id) : [];
+          padArthArray.forEach((item) => {
+            const parsed = JSON.parse(item.translation_text);
+            padArth += `${parsed.word.unicode} - ${parsed.english_meaning},  `;
+          });
+          aiTranslation.text.forEach((item) => {
+            text += item.translation_text + ' ';
+          });
+        }
+        if (dsTranslation && dsTranslation.text) {
+          dsTranslation.text.forEach((item) => {
+            dsText += item.translation_text + ' ';
+          });
+        }
 
         updatedVerse.translation.ai = {
           pss: padArth || '',
           ss: text || '',
+          dsSs: dsText || '',
         };
       }
       return updatedVerse;
@@ -204,7 +226,7 @@ class Shabad extends React.PureComponent {
 
     const verseIds = gurbani.map((verse) => verse.verseId);
     try {
-      const data = await this.fetchAiTranslations(verseIds);
+      const { data, dsData } = await this.fetchAllAiTranslations(verseIds);
 
       const fullTranslation = Object.values(data.verses).filter(obj => obj.text.length > 0);
 
@@ -212,7 +234,7 @@ class Shabad extends React.PureComponent {
         this.setState({ reviewEligibility: { isEligible: false, alreadyReviewed: false, newVersionAvailable: false } });
       }
 
-      const { processed, scholarStatus } = this.mergeAiTranslations(gurbani, data);
+      const { processed, scholarStatus } = this.mergeAiTranslations(gurbani, data, dsData);
       this.setState({
         processedGurbani: processed,
         reviewEligibility: { ...this.state.reviewEligibility, scholarReviewed: scholarStatus },
@@ -232,7 +254,7 @@ class Shabad extends React.PureComponent {
 
     const verseIds = pages.flatMap(({ page }) => page.map((verse) => verse.verseId));
     try {
-      const data = await this.fetchAiTranslations(verseIds);
+      const { data, dsData } = await this.fetchAllAiTranslations(verseIds);
 
       const fullTranslation = Object.values(data.verses).filter(obj => obj.text.length > 0);
 
@@ -242,7 +264,7 @@ class Shabad extends React.PureComponent {
 
       let scholarStatus = false;
       const processedPages = pages.map((pageData) => {
-        const { processed, scholarStatus: pageScholarStatus } = this.mergeAiTranslations(pageData.page, data);
+        const { processed, scholarStatus: pageScholarStatus } = this.mergeAiTranslations(pageData.page, data, dsData);
         scholarStatus = pageScholarStatus;
         return { ...pageData, page: processed };
       });

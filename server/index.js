@@ -118,19 +118,23 @@ app.post('/api/ai-translations', async (req, res) => {
       });
     }
 
-    const { verse_id } = req.body;
+    const { verse_id, run_id } = req.body;
     if (!verse_id) {
       return res.status(400).json({
         status: 'error',
         message: 'Verse ids list is required'
       });
     }
+    const upstreamBody = { verse_ids: verse_id };
+    if (run_id !== undefined) {
+      upstreamBody.run_id = run_id;
+    }
     const response = await fetch(`${process.env.SODH_API}/api/verse`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ verse_ids: verse_id }),
+      body: JSON.stringify(upstreamBody),
     });
 
     const data = await response.json();
