@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import fs from 'fs';
+import path from 'path';
 import { hostname as _hostname } from 'os';
 import createTemplate from './template';
 import seo from '../common/seo';
@@ -33,6 +35,46 @@ const allowedOrigins = process.env.NODE_ENV === 'development' ? [
 const ON_HEROKU = 'ON_HEROKU' in process.env;
 
 port = ON_HEROKU ? process.env.PORT : port;
+
+// The project's `esm` module loader can't parse the modern @anthropic-ai/sdk,
+// so we call the Messages API over raw HTTPS (same approach as the other
+// upstream proxies in this file). The key stays server-side.
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+
+const EXPLAIN_SHABAD_SYSTEM_PROMPT = fs.readFileSync(
+  path.join(__dirname, 'prompts', 'explain-shabad.md'),
+  'utf8'
+);
+
+// Structured-output schema — mirrors the JSON shape the prompt asks for.
+const EXPLAIN_SHABAD_SCHEMA = {
+  type: 'object',
+  properties: {
+    summary: { type: 'string' },
+    verses: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          gurmukhi: { type: 'string' },
+          explanation: { type: 'string' },
+        },
+        required: ['gurmukhi', 'explanation'],
+        additionalProperties: false,
+      },
+    },
+    key_takeaways: { type: 'array', items: { type: 'string' } },
+    daily_routine: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['summary', 'verses', 'key_takeaways', 'daily_routine'],
+  additionalProperties: false,
+};
+
+// In-memory cache of generated explanations, keyed by shabadId. A shabad's
+// verses are deterministic, so the same id never needs a second Claude call.
+// Bounded with simple FIFO eviction to avoid unbounded memory growth.
+const EXPLAIN_CACHE_MAX = 500;
+const explainCache = new Map();
 
 const app = express();
 
@@ -137,6 +179,122 @@ app.post('/api/ai-translations', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('AI translation error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Generates a categorized shabad explanation via Claude Opus 4.7.
+// Receives the already-fetched shabad data from the client so no
+// upstream fetching happens here.
+app.post('/api/explain-shabad', async (req, res) => {
+  try {
+    const origin = req.get('Origin') || req.get('Referer');
+
+    if (origin && !allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+      return res.status(403).json({
+        status: 'error',
+        message: `Access denied from ${origin}`
+      });
+    }
+
+    const { shabadId, verses } = req.body;
+
+    // Serve from cache if this shabad was already explained.
+    const cacheKey =
+      shabadId !== undefined && shabadId !== null ? String(shabadId) : null;
+    if (cacheKey && explainCache.has(cacheKey)) {
+      return res.json(explainCache.get(cacheKey));
+    }
+
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'ANTHROPIC_API_KEY is not configured'
+      });
+    }
+
+    if (!Array.isArray(verses) || verses.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'verses array is required'
+      });
+    }
+
+    // Map the fetched shabad data to the prompt's expected input shape.
+    const promptVerses = verses.map((v) => ({
+      gurmukhi: v.gurmukhi,
+      puu_ss: v.punjabi, // Punjabi meaning by Prof. Sahib Singh
+      translation: v.english, // vetted English translation of puu_ss
+    }));
+
+    const claudeResponse = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-7',
+        max_tokens: 16000,
+        thinking: { type: 'adaptive' },
+        output_config: {
+          effort: 'medium',
+          format: { type: 'json_schema', schema: EXPLAIN_SHABAD_SCHEMA },
+        },
+        system: [
+          {
+            type: 'text',
+            text: EXPLAIN_SHABAD_SYSTEM_PROMPT,
+            cache_control: { type: 'ephemeral' },
+          },
+        ],
+        messages: [
+          {
+            role: 'user',
+            content: JSON.stringify({ shabadId, verses: promptVerses }),
+          },
+        ],
+      }),
+    });
+
+    const message = await claudeResponse.json();
+
+    if (!claudeResponse.ok) {
+      console.error('Anthropic API error:', message);
+      return res.status(502).json({
+        status: 'error',
+        message: 'Failed to generate explanation'
+      });
+    }
+
+    const textBlock =
+      Array.isArray(message.content) &&
+      message.content.find((block) => block.type === 'text');
+
+    if (!textBlock) {
+      return res.status(502).json({
+        status: 'error',
+        message: 'No explanation was returned'
+      });
+    }
+
+    const payload = { shabadId, ...JSON.parse(textBlock.text) };
+
+    if (cacheKey) {
+      // FIFO eviction once the cache is full.
+      if (explainCache.size >= EXPLAIN_CACHE_MAX) {
+        explainCache.delete(explainCache.keys().next().value);
+      }
+      explainCache.set(cacheKey, payload);
+    }
+
+    res.json(payload);
+  } catch (error) {
+    console.error('Explain shabad error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Internal server error'

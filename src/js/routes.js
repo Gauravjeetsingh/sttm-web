@@ -370,6 +370,31 @@ export default [
     },
   },
   {
+    path: '/explain/:shabadId',
+    render(props) {
+      return (
+        <Layout title="Explanation - SikhiToTheMax" {...props}>
+          <RenderPromise
+            promise={() =>
+              import(/* webpackChunkName: "Explain" */ './pages/Explain')
+            }
+          >
+            {({ pending, resolved: { default: Explain } = {}, rejected }) =>
+              pending ? null : Explain ? (
+                <Explain {...props} />
+              ) : (
+                throwError(
+                  `We are having trouble in rendering this route.`,
+                  rejected
+                )
+              )
+            }
+          </RenderPromise>
+        </Layout>
+      );
+    },
+  },
+  {
     path: '/amrit-keertan/shabads/:shabadId',
     render(props) {
       return (

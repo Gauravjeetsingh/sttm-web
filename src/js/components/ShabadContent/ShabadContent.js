@@ -263,6 +263,26 @@ class Shabad extends React.PureComponent {
     }));
   }
 
+  handleExplain = () => {
+    const { info, history } = this.props;
+    const { processedGurbani } = this.state;
+    const shabadId = getShabadId(info);
+
+    const explainData = {
+      shabadId,
+      verses: (processedGurbani || []).map((verse) => ({
+        gurmukhi: verse.verse.unicode,
+        english: verse.translation?.ai?.ss || '',
+        punjabi: verse.translation?.pu?.ss?.unicode || '',
+      })),
+    };
+
+    history.push({
+      pathname: `/explain/${shabadId}`,
+      state: { explainData },
+    });
+  };
+
   render() {
     const {
       props: {
@@ -361,6 +381,16 @@ class Shabad extends React.PureComponent {
                   : TEXTS.SHABAD_REVIEW.BANNER_BODY_NOT_REVIEWED}
                   <a className="review-translations-process-text review-translations-link" href={TEXTS.SHABAD_REVIEW.LEARN_ABOUT_PROCESS_URL}>{TEXTS.SHABAD_REVIEW.LEARN_ABOUT_PROCESS}</a>
               </p>
+            </div>
+          )}
+          {type === 'shabad' && (
+            <div className="explain-shabad-action">
+              <button
+                className="btn btn-primary"
+                onClick={this.handleExplain}
+              >
+                Explain
+              </button>
             </div>
           )}
           <div id="shabad" className={`shabad display display-${type}`} aria-label="Shabad Container">
